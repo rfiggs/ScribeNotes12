@@ -112,37 +112,67 @@ Now let's prove $\forall i \leq a_k : A[i] < B[rank_B(A[a_k])+1 ... rank_B(A[a_{
 
 Since we have shown that $\forall i \leq a_k : A[i] < A[a_k+1 ... a_{k+1}]$ AND $\forall i \leq a_k : A[i] < B[rank_B(A[a_k])+1 ... rank_B(A[a_{k+1}])]$ is true. Then $\forall i \leq a_k : A[i] < C[...]$ is also true.
 
-\subsection{Blah blah blah}
-Here is a subsection.
+\subsection{Algorithm}
+Now, we can start to write the algorithm for the parallel merging sort using above what we prove.
+Before writing algorithm, we should analyze how it works.  First, we chunks the array A into a smaller array and each array carries $logn$ elements.  For the each last element of array $A_1, A_2, A_3 ... A_n$,  we find it rank in array B so we get $B_1, B_2, B_3 ... B_n$.  IF the size of array $B_k$ is greater than $log$ , it jumps to recursive function and switchs $A_k$ with $B_k$.  However, the recursive function only runs once since after switching the size of array $B_k$ will be smaller than $logn$. Therefore, we can parallel do the merge sort for each $A_1 \cup B_1$ .... and put in array $C$ in order.  The $C$ array is the final answer. 
 
-\subsubsection{Blah blah blah}
-Here is a subsubsection. You can use these as well.
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c| }
+  \multicolumn{1}{c}{} &
+  \multicolumn{1}{c}{$A_1$} &
+  \multicolumn{1}{c}{$A_2$} &
+  \multicolumn{1}{c}{$A_3$} &
+  \multicolumn{1}{c}{$A_4$} &
+  \multicolumn{1}{c}{}\\
+\hline
+ $A$  & & & & & & \\
+ \hline
+  \multicolumn{1}{c}{} &
+  \multicolumn{1}{c}{$\downarrow$} &
+  \multicolumn{1}{c}{$\downarrow$} &
+  \multicolumn{1}{c}{$\downarrow$} &
+  \multicolumn{1}{c}{$\downarrow$} &
+  \multicolumn{1}{c}{} \\
+ \hline
+ $B$ & & & & & & \\
+ \hline
+ \multicolumn{1}{c}{} &
+ \multicolumn{1}{c}{$B_1$} &
+ \multicolumn{1}{c}{$B_2$} &
+ \multicolumn{1}{c}{$B_3$} &
+ \multicolumn{1}{c}{$B_4$} &
+ \multicolumn{1}{c}{} \\
+ \hline
+ $C$  & $A_1 \cup B_1$ &$A_2 \cup B_2$  &$A_3 \cup B_3$  & $A_4 \cup B_4$ & & \\
+ \hline
+ \multicolumn{1}{c}{} &
+ \multicolumn{1}{c}{$A_1$} &
+ \multicolumn{1}{c}{$A_2$} &
+ \multicolumn{1}{c}{$A_3$} &
+ \multicolumn{1}{c}{$A_4$} &
+ \multicolumn{1}{c}{}\\
+ 
+\end{tabular}
+\end{center}
 
-\subsection{Using Boldface}
-Make sure to use lots of boldface.
 
-\paragraph{Question:}
-How would you use boldface?
+\begin{algorithm}
+\caption{Parallel-Merge}
+\begin{algorithmic}[1]
+\State n' = $\floor{n/logn}$
+\For {k = 1 to n' + 1 in parallel do:}
+  \State r[k] = rank( A[k - logn] , B)
+  \If (r_k+1 - r[k]+1) <= logn
+  \State C[(klogn + r[k] + 1) ... (k+1)logn + r[k+1]] = seq-merge(A[k-logn +1...(k+1)logn)], B[r[k] + 1 ... r[k + 1]])
+  \else
+  \State C[(klogn + r[k] + 1) ... (k+1)logn + r[k+1]] = Parallel-Merge(B[r[k] + 1 ... r[k + 1]] , A[k-logn +1...(k+1)logn)])
+  \EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
-\paragraph{Example:}
-This is an example showing how to use boldface to
-help organize your lectures.
-
-
-\paragraph{Some Formatting.}
-Here is some formatting that you can use in your notes:
-\begin{itemize}
-\item {\em Item One} -- This is the first item.
-\item {\em Item Two} -- This is the second item.
-\item \dots and here are other items.
-\end{itemize}
-
-If you need to number things, you can use this style:
-\begin{enumerate}
-\item {\em Item One} -- Again, this is the first item.
-\item {\em Item Two} -- Again, this is the second item.
-\item \dots and here are other items.
-\end{enumerate}
+\section{Conclusion}
+For this lecture, we find a more work-efficient in $O(logn)$ time merging sort in parallel and also partially prove that.  At the next lecture we will completely prove it works step by step. 
 
 %\bibliography{mybib}
 \bibliographystyle{alpha}
